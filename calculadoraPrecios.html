@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Calcular precios farmacia</title>
+    <link rel="stylesheet" href="/w3css/4/w3.css">
+    <link href='https://fonts.googleapis.com/css?family=Source Code Pro' rel='stylesheet'>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</head>
+<body>
+<style>
+    .resalto{
+        border-color: #040501;
+        border-width: 2px;
+    }
+</style>
+<div id="block principal" class="container-fluid text-center">
+    <h2 class="mt-3 mb-4">Calcular precios farmacia</h2>
+    <form class="container">
+        <div class="row">
+
+        <div class="col-6 col-md-4">
+        <label>PVF:</label>
+        <input type="number" class="form-control resalto" oninput="calcular()" id="pvfalbaran" value="5.54">
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>PVF bonificado:</label>
+        <input type="number" class="form-control"  id="pvfBonificado" value="5.54" readonly disabled>
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>% Descuento:</label>
+        <input type="number" class="form-control" oninput="calcular()" id="descuento"  min="0" max="100" value="0">
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>Unidades:</label>
+        <input type="number" class="form-control" oninput="calcular()" id="unidades" value="1" min="1" step="1">
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>Bonificaciones:</label>
+        <input type="number" class="form-control" oninput="calcular()" id="bonificaciones" value="0" min="0" step="1">
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>% Comisión gestión:</label>
+        <input type="number" class="form-control" oninput="calcular()" id="comision" value="0">
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>% IVA:</label>
+        <select class="form-control resalto" id="iva" onchange="calcular()">
+            <option value="4">4%</option>
+            <option value="10">10%</option>
+            <option value="21" selected>21%</option>
+        </select>
+        </div>
+        
+        <div class="col-6 col-md-4">
+        <label>PVF neto:</label>
+        <input type="text" class="form-control"  id="pvfxb" readonly disabled>
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>% Margen Beneficio:</label>
+        <input type="number" class="form-control resalto" value="30" oninput="calcular()" id="beneficio" min="0" max="99.99">
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>% Margen Markup:</label>
+        <input type="number" class="form-control" value="30" oninput="calcular()" id="markup" min="0" readonly disabled>
+        </div>
+
+        
+        <div class="col-6 col-md-4">
+        <label>PVP:</label>
+        <input type="number" class="form-control resalto"  id="pvpxb" oninput="margenBeneficio()">
+        </div>
+        
+        <div class="col-6 col-md-4">
+        <label>Factor multiplicación:</label>
+        <input type="number" class="form-control"  id="factorMultiplicacion"readonly disabled>
+        </div>
+        
+        <div class="col-6 col-md-4">
+        <label>Beneficio Neto:</label>
+        <input type="number" class="form-control"  id="beneficioNeto" readonly disabled>
+        </div>
+
+        <div class="col-6 col-md-4">
+        <label>Markup Neto:</label>
+        <input type="number" class="form-control"  id="markupNeto" readonly disabled>
+        </div>
+
+        
+        </div>
+    </form>
+</div>
+<div class="container">
+<p class="small text-muted mb-1 mt-5"><strong>Tipos de recargo de equivalencia(2026):</strong></p>
+<ul class="small text-start">
+  <li>21% IVA → 5,2% de recargo</li>
+  <li>10% IVA → 1,4% de recargo</li>
+  <li>4% IVA → 0,5% de recargo</li>
+</ul>
+<div>
+<footer class="small text-muted mt-5 me-5">
+    <p class="text-end">&copy; 2026 Martín Agüera</p>
+</footer>
+</div>
+
+</div>
+<script>
+calcular();
+function calcular() {
+    var pvfalb,comision,pvfreal,pvp,margen,beneficioNeto;
+    pvfalb = parseFloat(document.getElementById("pvfalbaran").value);
+    comision = parseFloat(document.getElementById("comision").value)/100;
+    margen=parseFloat(document.getElementById("beneficio").value)/100;
+    select=document.getElementById("iva").value;
+    beneficioNeto=document.getElementById("beneficioNeto");
+    descuento=parseFloat(document.getElementById("descuento").value)/100;
+    unidades=parseFloat(document.getElementById("unidades").value);
+    bonificaciones=parseFloat(document.getElementById("bonificaciones").value);
+    pvfBonificado=parseFloat(document.getElementById("pvfBonificado").value);
+    document.getElementById("pvfBonificado").value=pvfalb.toFixed(2);
+    if (descuento>0){
+        pvfBonificado=pvfalb*(1-descuento);
+        document.getElementById("pvfBonificado").value=pvfBonificado.toFixed(2);
+        pvfalb=pvfBonificado;
+    }
+
+
+    if (bonificaciones>0){
+        descuentoBonificaciones=bonificaciones/unidades;
+        pvfalb=pvfalb*(1-descuentoBonificaciones);
+        document.getElementById("pvfBonificado").value=pvfalb.toFixed(2);
+    }
+    
+
+    if (select==4){
+  
+    pvfreal=pvfalb*(1+comision+0.045);
+	pvp=pvfreal/(1-margen);
+	document.getElementById("pvfxb").value=pvfreal.toFixed(2);
+    document.getElementById("pvpxb").value=pvp.toFixed(2);
+    }
+    else if (select==10){
+        
+    pvfreal=pvfalb*(1+comision+0.114);
+	pvp=pvfreal/(1-margen);
+    document.getElementById("pvfxb").value=pvfreal.toFixed(2);
+    document.getElementById("pvpxb").value=pvp.toFixed(2);
+
+    }
+    else{
+        
+    pvfreal=pvfalb*(1+comision+0.262);
+	pvp=pvfreal/(1-margen);
+    document.getElementById("pvfxb").value=pvfreal.toFixed(2);
+	document.getElementById("pvpxb").value=pvp.toFixed(2);
+    }
+    beneficioNeto.value=(pvp-pvfreal).toFixed(2);
+    document.getElementById("factorMultiplicacion").value=(pvp/pvfalb).toFixed(2);
+    document.getElementById("markup").value=((pvp/pvfreal-1)*100).toFixed(2);
+    document.getElementById("markupNeto").value=((pvp-pvfreal)).toFixed(2);
+    
+
+}
+
+function margenBeneficio(){
+    var pvfreal,pvp,margen,beneficioNeto;
+    margen=parseFloat(document.getElementById("beneficio").value)/100;
+    pvp=parseFloat(document.getElementById("pvpxb").value);
+    pvfreal=parseFloat(document.getElementById("pvfxb").value);
+    beneficioNeto=document.getElementById("beneficioNeto");
+    margenfinal=(pvp-pvfreal)/pvp*100;
+    document.getElementById("beneficio").value=margenfinal.toFixed(2);
+    beneficioNeto.value=(pvp-pvfreal).toFixed(2);
+    document.getElementById("factorMultiplicacion").value=(pvp/pvfreal).toFixed(2);
+    document.getElementById("markup").value=((pvp/pvfreal-1)*100).toFixed(2);
+    document.getElementById("markupNeto").value=((pvp-pvfreal)).toFixed(2);
+}
+
+
+</script>
+
+</body>
