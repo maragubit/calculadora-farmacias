@@ -166,7 +166,7 @@ function calcular() {
     document.getElementById("pvfxb").value=pvfreal.toFixed(2);
 	document.getElementById("pvpxb").value=pvp.toFixed(2);
     }
-    beneficioNeto.value=(pvp-pvfreal).toFixed(2);
+    beneficioNeto.value=(pvp*margen).toFixed(2);
     document.getElementById("factorMultiplicacion").value=(pvp/pvfalb).toFixed(2);
     document.getElementById("markup").value=((pvp/pvfreal-1)*100).toFixed(2);
     document.getElementById("markupNeto").value=((pvp-pvfreal)).toFixed(2);
@@ -182,7 +182,7 @@ function margenBeneficio(){
     beneficioNeto=document.getElementById("beneficioNeto");
     margenfinal=(pvp-pvfreal)/pvp*100;
     document.getElementById("beneficio").value=margenfinal.toFixed(2);
-    beneficioNeto.value=(pvp-pvfreal).toFixed(2);
+    beneficioNeto.value=(pvp*margenfinal/100).toFixed(2);
     document.getElementById("factorMultiplicacion").value=(pvp/pvfreal).toFixed(2);
     document.getElementById("markup").value=((pvp/pvfreal-1)*100).toFixed(2);
     document.getElementById("markupNeto").value=((pvp-pvfreal)).toFixed(2);
